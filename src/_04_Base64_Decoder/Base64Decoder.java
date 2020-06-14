@@ -32,13 +32,13 @@ public class Base64Decoder {
 
 	// 1. Complete this method so that it returns the the element in
 	// the base64Chars array that corresponds to the passed in char.
-	public static byte convertBase64Char(char c){
+	public static byte convertBase64Char(char c) {
 		byte numInArr = 0;
 		for (int i = 0; i < base64Chars.length; i++) {
 			if (base64Chars[i] == c) {
-				numInArr = (byte)i;
+				numInArr = (byte) i;
 			}
-			
+
 		}
 		return numInArr;
 	}
@@ -46,13 +46,55 @@ public class Base64Decoder {
 	// 2. Complete this method so that it will take in a string that is 4
 	// characters long and return an array of 3 bytes (24 bits). The byte
 	// array should be the binary value of the encoded characters.
-	public static byte[] convert4CharsTo24Bits(String s) {		 
-		return null;
+	public static byte[] convert4CharsTo24Bits(String s) {
+		byte[] byteArr = new byte[3];
+
+		char c1 = s.charAt(0);
+		char c2 = s.charAt(1);
+		char c3 = s.charAt(2);
+		char c4 = s.charAt(3);
+
+		byte c1Shifted = (byte) (convertBase64Char(c1) << 2);
+		byte c2Shifted = (byte) (convertBase64Char(c2) >>> 4);
+		byte c12Combined = (byte) (c1Shifted + c2Shifted);
+
+		byte c2Shifted2 = (byte) (convertBase64Char(c2) << 4);
+		byte c3Shifted = (byte) (convertBase64Char(c3) >>> 2);
+		byte c23Combined = (byte) (c2Shifted2 + c3Shifted);
+
+		byte c3Shifted2 = (byte) (convertBase64Char(c3) << 6);
+		byte c4Shifted = (byte) (convertBase64Char(c4));
+		byte c34Combined = (byte) (c3Shifted2 + c4Shifted);
+
+		byteArr[0] = (byte) c12Combined;
+		byteArr[1] = (byte) c23Combined;
+		byteArr[2] = (byte) c34Combined;
+		return byteArr;
+
 	}
 
 	// 3. Complete this method so that it takes in a string of any length
 	// and returns the full byte array of the decoded base64 characters.
 	public static byte[] base64StringToByteArray(String file) {
-		return null;
+		byte[] byteArr = new byte[file.length()];
+		byte[] tempArr;
+		String value = "";
+		for (int i = 0; i < file.length(); i += 4) {
+			value += file.charAt(i);
+			value += file.charAt(i + 1);
+			value += file.charAt(i + 2);
+			value += file.charAt(i + 3);
+			tempArr = convert4CharsTo24Bits(value);
+
+			for (int j = 0; j < tempArr.length; j++) {
+				byteArr[j] = tempArr[0];
+				byteArr[j + 1] = tempArr[1];
+				byteArr[j + 2] = tempArr[2];
+
+			}
+
+		}
+
+		return byteArr;
 	}
 }
